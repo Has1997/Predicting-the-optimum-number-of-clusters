@@ -1,0 +1,72 @@
+################################### TASK 2 ############################################
+
+#installing the packages
+library("stats")
+library("ggplot2")
+library("ggfortify")
+library("dplyr")
+library("factoextra")
+library("NbClust")
+
+######################
+#Set working directory
+######################
+setwd("D:\\")
+class <- read.csv("Iris.csv")
+class
+
+#################
+ #view the csv data
+##################
+View(class)
+
+################################
+#internal structure  of the data
+################################
+str(class)
+
+
+
+#######################
+#summary of the dataset
+#######################
+summary (class)
+
+###########################################
+#determining the optimal number of clusters
+###########################################
+
+#ELBOW METHOD
+
+
+dataset<-data.matrix(class)
+head(dataset)
+ 
+wss<-(nrow(dataset)-1)*sum(apply(dataset,2,var))
+for (i in 2:10) 
+wss[i]<- sum(kmeans(dataset,centers = i)$withinss)
+
+
+plot(1:10, wss ,type="b", xlab= "Number of clusters",
+        ylab="Within groups sum of squares",col = "blue")
+
+
+par(mar=c(2,2,2,2))
+irisData <- iris[,1:4]
+totalwSS<- c()
+nb <- NbClust(irisData, method = "kmeans")
+   
+###############################################
+#3 methods to plot based on the Nbclust package
+###############################################
+
+
+fviz_nbclust(dataset, kmeans,method = "wss")+
+  geom_vline(xintercept = 2, linetype = 2)+
+  labs(subtitle = "Withinss")
+
+fviz_nbclust(dataset, kmeans, nstart = 10, method = "gap_stat", nboot=20)+
+ labs(substitle = "Gap-Stat")
+
+fviz_nbclust(dataset,kmeans,method = "silhouette")+
+ labs(subtitle = "silhouette")
